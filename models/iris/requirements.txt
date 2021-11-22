@@ -9,6 +9,7 @@ onnx
 skl2onnx
 onnxmltools
 onnxruntime
+protobuf
 
 bentoml
 
