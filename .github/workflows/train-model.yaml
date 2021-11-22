@@ -22,8 +22,8 @@ jobs:
       - uses: iterative/setup-cml@v1
       - uses: iterative/setup-dvc@v1
       - uses: actions/setup-python@v2
-          with:
-            python-version: '3.x'
+        with:
+          python-version: '3.x'
       - name: Train model
         run: |
           pip uninstall protobuf python3-protobuf
