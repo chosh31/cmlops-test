@@ -9,7 +9,7 @@ onnx
 skl2onnx
 onnxmltools
 onnxruntime
-protobuf
+protobuf==3.19.1
 
 bentoml
 
