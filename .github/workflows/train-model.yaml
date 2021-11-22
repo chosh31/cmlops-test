@@ -21,6 +21,10 @@ jobs:
       #     python-version: '3.x'
       - name: Train model
         run: |
+          pip uninstall protobuf python3-protobuf
+          pip install --upgrade pip
+          pip install --upgrade protobuf
+
           # Your ML workflow goes here
           pip install -r requirements.txt
           python train.py
