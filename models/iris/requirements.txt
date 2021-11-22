@@ -1,0 +1,16 @@
+pandas
+lightgbm
+sklearn
+matplotlib
+seaborn
+numpy
+
+onnx
+skl2onnx
+onnxmltools
+onnxruntime
+
+bentoml
+
+dvc
+dvc[s3]
