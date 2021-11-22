@@ -1,0 +1,18 @@
+stages:
+  train:
+    cmd: python train.py
+    deps:
+    - train.py
+    outs:
+    - iris.onnx
+    - iris.pickle
+  evaluate:
+    cmd: python evaluate.py
+    deps:
+    - evaluate.py
+    - iris.pickle
+    outs:
+    - cnf_matrix.png
+    metrics:
+    - score.json:
+        cache: false
