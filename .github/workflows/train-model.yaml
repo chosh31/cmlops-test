@@ -35,7 +35,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACC_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SEC_ID }}
         run: |
-          dvc pull
+          # dvc pull
           dvc repro
 
           python evaluate.py
