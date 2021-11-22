@@ -19,6 +19,7 @@ jobs:
       # - uses: actions/setup-python@v2
       #   with:
       #     python-version: '3.x'
+      - uses: iterative/setup-cml@v1
       - name: Train model
         run: |
           pip uninstall protobuf python3-protobuf
