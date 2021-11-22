@@ -10,7 +10,7 @@ import seaborn as sns
 
 iris = load_iris()
 X, y = iris.data, iris.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=30)
 
 with open('iris.pickle', 'rb') as f:
     model = pickle.load(f)
