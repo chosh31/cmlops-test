@@ -20,6 +20,10 @@ jobs:
       #   with:
       #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
+      - uses: iterative/setup-dvc@v1
+      - uses: actions/setup-python@v2
+          with:
+            python-version: '3.x'
       - name: Train model
         run: |
           pip uninstall protobuf python3-protobuf
@@ -32,6 +36,8 @@ jobs:
       - name: Write CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACC_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SEC_ID }}
         run: |
           dvc pull
           dvc repro
