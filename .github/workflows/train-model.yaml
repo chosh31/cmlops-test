@@ -31,7 +31,7 @@ jobs:
           python train.py
       - name: Write CML report
         env:
-          REPO_TOKEN: ${{ secrets.PAT }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dvc pull
           dvc repro
