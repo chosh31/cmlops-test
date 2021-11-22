@@ -1,0 +1,17 @@
+name: test-command
+on:
+  repository_dispatch:
+    types: [test-command]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add reaction
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: hooray
+
+      - name: Run Cmd
+        run: |
+          echo "Run Test Command!"
