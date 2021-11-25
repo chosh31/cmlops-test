@@ -36,8 +36,8 @@ jobs:
         id: ecr
         uses: jwalton/gh-ecr-push@v1
         with:
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          access-key-id: ${{ secrets.ACC_KEY }}
+          secret-access-key: ${{ secrets.SEC_ID }}
           region: ap-northeast-2
           image: cmlops-test:latest
       
