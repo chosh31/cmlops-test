@@ -12,6 +12,9 @@ WORKDIR /app
 # RUN cd ./models/iris
 
 # RUN pip install -r requirements.txt --no-cache-dir
+RUN pip uninstall protobuf python3-protobuf
+RUN pip install --upgrade pip
+RUN pip install --upgrade protobuf
 RUN pip install -r requirements.txt
 # RUN pip install "dvc[s3]"
 
