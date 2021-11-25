@@ -1,5 +1,11 @@
 name: action-push
-on: [push]
+on: 
+  push: 
+    branches-ignore:
+      - main
+  pull_request:
+    branches-ignore: 
+      - main
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -19,22 +25,30 @@ jobs:
       #   with:
       #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
-      - name: Train model
-        run: |
-          pip uninstall protobuf python3-protobuf
-          pip install --upgrade pip
-          pip install --upgrade protobuf
+      # - name: Train model
+      #   run: |
+      #     pip uninstall protobuf python3-protobuf
+      #     pip install --upgrade pip
+      #     pip install --upgrade protobuf
 
-          # Your ML workflow goes here
-          pip install -r requirements.txt
-          python train.py
+      #     # Your ML workflow goes here
+      #     pip install -r requirements.txt
+      #     python train.py
       - name: Write CML report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACC_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SEC_ID }}
         run: |
+          # dvc pull
+          dvc repro
+
           python evaluate.py
 
-          echo "## Model Metrics (json)" >> report.md
-          cat score.json >> report.md
+          echo "## Model Metrics" >> report.md
+          dvc metrics diff main --show-md >> report.md
+
+          echo "## Data" >> report.md
+          cml-publish cnf_matrix.png --md >> report.md
           
           cml-send-comment report.md
