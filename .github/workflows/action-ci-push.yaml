@@ -1,0 +1,45 @@
+name: action-ci-push
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches: 
+      - main
+jobs:
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # optionally use a convenient Ubuntu LTS + DVC + CML image
+    # container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    defaults:
+      run:
+        # TODO
+        working-directory: ./models/iris
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{github.ref}}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACC_KEY }}
+          aws-secret-access-key: ${{ secrets.SEC_ID }}
+          aws-region: ap-northeast-2
+      - name: Build container
+        run: |
+          docker build --build-arg AWS_ACCESS_KEY_ID=${{ secrets.ACC_KEY }} \
+                      --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.SEC_ID }} \
+                      --tag cmlops-test .
+      - name: Push2ECR
+        id: ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ap-northeast-2
+          image: cmlops-test:latest
+      
+      # - name: Update lambda with image
+      #   run: aws lambda update-function-code --function-name  MLOps-Basics --image-uri 246113150184.dkr.ecr.us-west-2.amazonaws.com/mlops-basics:latest

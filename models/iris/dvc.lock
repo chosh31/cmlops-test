@@ -4,11 +4,11 @@ stages:
     cmd: python train.py
     deps:
     - path: train.py
-      md5: 2b02a77344865297146ece6a28daae39
-      size: 1689
+      md5: a7a51dc49873419a09c4522fb6091a8a
+      size: 718
     outs:
     - path: iris.onnx
-      md5: ccebda5c454453b5f085e43c3f94021e
+      md5: e3524edc7802eea5780788199a2cc9c2
       size: 697
     - path: iris.pickle
       md5: 03c716131664a817da676969770bac7e
@@ -17,8 +17,8 @@ stages:
     cmd: python evaluate.py
     deps:
     - path: evaluate.py
-      md5: 1badcccf44d5d709cbd5c0b92d1554b1
-      size: 1664
+      md5: 327022c9286cda8316a7864aadf99778
+      size: 1353
     - path: iris.pickle
       md5: 03c716131664a817da676969770bac7e
       size: 828

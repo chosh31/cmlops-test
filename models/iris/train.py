@@ -1,4 +1,3 @@
-import json
 import pickle
 
 import sklearn.metrics as metrics
@@ -17,9 +16,9 @@ model = LogisticRegression()
 model.fit(X_train, y_train)
 
 with open('iris.pickle', 'wb') as f:
-    pickle.dump(model, f)
+	pickle.dump(model, f)
 
 initial_type = [('float_input', FloatTensorType([None, 4]))]
 onx = convert_sklearn(model, initial_types=initial_type)
 with open('iris.onnx', 'wb') as f:
-    f.write(onx.SerializeToString())
+	f.write(onx.SerializeToString())
