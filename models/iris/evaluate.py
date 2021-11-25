@@ -1,5 +1,7 @@
 import json
-import pickle
+# import pickle
+
+from infer import IrisONNXPredictor
 
 import sklearn.metrics as metrics
 from sklearn.datasets import load_iris
@@ -12,17 +14,20 @@ iris = load_iris()
 X, y = iris.data, iris.target
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
-with open('iris.pickle', 'rb') as f:
-    model = pickle.load(f)
+# with open('iris.pickle', 'rb') as f:
+#     model = pickle.load(f)
+# y_pred = model.predict(X_test)
 
-y_pred = model.predict(X_test)
+inferencing_instance = IrisONNXPredictor('./iris.onnx')
+y_pred = inferencing_instance.predict(X_test.tolist())
+
 accuracy = metrics.accuracy_score(y_test, y_pred)
 precision = metrics.precision_score(y_test, y_pred, average='micro')
 recall = metrics.recall_score(y_test, y_pred, average='micro')
 
 print({'accuracy': accuracy, 'precision': precision, 'recall': recall})
 with open('score.json', 'w') as fd:
-    json.dump({'accuracy': accuracy, 'precision': precision, 'recall': recall}, fd, indent=4)
+	json.dump({'accuracy': accuracy, 'precision': precision, 'recall': recall}, fd, indent=4)
 
 cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
 print(cnf_matrix)
