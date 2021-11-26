@@ -6,10 +6,7 @@ ARG AWS_SECRET_ACCESS_KEY
 ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
 ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 
-COPY . /app
-
-WORKDIR /app
-# RUN cd ./models/iris
+COPY . ${LAMBDA_TASK_ROOT}
 
 # RUN pip install -r requirements.txt --no-cache-dir
 RUN pip uninstall protobuf python3-protobuf
@@ -25,6 +22,4 @@ RUN dvc remote add -d storage s3://knowre-datacentral/test/dvc
 RUN dvc repro
 RUN python lambda_handler.py
 
-RUN chmod -R 0755 index.py
-
-CMD [ "index.lambda_handler" ]
+CMD [ "lambda_handler.lambda_handler" ]
