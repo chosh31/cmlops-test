@@ -13,12 +13,9 @@ jobs:
     # optionally use a convenient Ubuntu LTS + DVC + CML image
     # container: docker://ghcr.io/iterative/cml:0-dvc2-base1
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACC_KEY }}
-          aws-secret-access-key: ${{ secrets.SEC_ID }}
-          aws-region: ap-northeast-2
+      - name: Prepared
+        run: |
+          echo "Prepared!!"
   deploy:
     needs: prepare
     runs-on: ubuntu-latest
@@ -27,6 +24,12 @@ jobs:
         # TODO
         working-directory: ./models/iris
     steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACC_KEY }}
+          aws-secret-access-key: ${{ secrets.SEC_ID }}
+          aws-region: ap-northeast-2
       - name: Checkout
         uses: actions/checkout@v2
         with:
