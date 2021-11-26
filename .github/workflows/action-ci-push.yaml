@@ -41,5 +41,5 @@ jobs:
           region: ap-northeast-2
           image: cmlops-test:latest
       
-      # - name: Update lambda with image
-      #   run: aws lambda update-function-code --function-name  MLOps-Basics --image-uri 246113150184.dkr.ecr.us-west-2.amazonaws.com/mlops-basics:latest
+      - name: Update lambda with image
+        run: aws lambda update-function-code --function-name cmlops-test --image-uri 468720534852.dkr.ecr.ap-northeast-2.amazonaws.com/cmlops-test:latest
