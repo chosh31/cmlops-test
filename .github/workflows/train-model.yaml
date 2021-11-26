@@ -47,5 +47,6 @@ jobs:
           echo "## Data" >> report.md
           cml-publish cnf_matrix.png --md >> report.md
           
-          echo "sha: ${{ github.event.pull_request.head.sha | github.sha }}"
-          cml-send-comment --commit-sha=${{ github.event.pull_request.head.sha | github.sha }} report.md
+          echo "github: ${{ github }}"
+          echo "sha: ${{ github.event.pull_request.head.sha || github.sha }}"
+          cml-send-comment --commit-sha=${{ github.event.pull_request.head.sha || github.sha }} report.md
