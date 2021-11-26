@@ -47,4 +47,4 @@ jobs:
           echo "## Data" >> report.md
           cml-publish cnf_matrix.png --md >> report.md
           
-          cml-send-comment --pr report.md
+          cml-send-comment --pr --commitSha ${{ github.event.pull_request.head.sha }} report.md
