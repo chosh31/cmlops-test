@@ -19,7 +19,7 @@ jobs:
           aws-access-key-id: ${{ secrets.ACC_KEY }}
           aws-secret-access-key: ${{ secrets.SEC_ID }}
           aws-region: ap-northeast-2
-  build:
+  deploy:
     needs: prepare
     runs-on: ubuntu-latest
     defaults:
@@ -36,10 +36,6 @@ jobs:
           docker build --build-arg AWS_ACCESS_KEY_ID=${{ secrets.ACC_KEY }} \
                       --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.SEC_ID }} \
                       --tag cmlops-test .
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Push2ECR
         id: ecr
         uses: jwalton/gh-ecr-push@v1
@@ -48,6 +44,5 @@ jobs:
           secret-access-key: ${{ secrets.SEC_ID }}
           region: ap-northeast-2
           image: cmlops-test:latest
-      
       - name: Update lambda with image
         run: aws lambda update-function-code --function-name cmlops-test --image-uri 468720534852.dkr.ecr.ap-northeast-2.amazonaws.com/cmlops-test:latest
