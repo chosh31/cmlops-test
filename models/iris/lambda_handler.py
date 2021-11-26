@@ -27,9 +27,11 @@ def lambda_handler(event, context):
 	else:
 		params = ast.literal_eval(event['params'])
 		logger.info(f'Got the input: {params}')
-		response = inferencing_instance.predict(params)
-		logger.info(response)
-		return response
+		pred = inferencing_instance.predict(params)
+		logger.info(pred.tolist())
+		return {
+			'pred': pred.tolist()
+		}
 
 if __name__ == '__main__':
 	test = {'params': '[[5.1, 3.5, 1.4, 0.2],[5.1, 3.8, 1.9, 0.4],[4.9, 3.,  1.4, 0.2],[5.6, 2.8, 4.9, 2. ]]'}
