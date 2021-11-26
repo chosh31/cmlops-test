@@ -64,7 +64,9 @@ jobs:
     steps:
       - name: Create URL to the run output
         id: vars
-        run: echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+        run: |
+          echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          echo ::set-output name=report-url::https://github.com/$GITHUB_REPOSITORY/commit/${{ github.event.pull_request.head.sha || github.sha }}
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v1
         with:
@@ -72,6 +74,8 @@ jobs:
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-            [Command run output][1]
+            [Model report output][1]
+            [Github action run output][2]
 
-            [1]: ${{ steps.vars.outputs.run-url }}
+            [1]: ${{ steps.vars.outputs.report-url }}
+            [2]: ${{ steps.vars.outputs.run-url }}
