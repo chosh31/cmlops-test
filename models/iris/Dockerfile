@@ -25,4 +25,4 @@ RUN dvc remote add -d storage s3://knowre-datacentral/test/dvc
 RUN dvc repro
 RUN python lambda_handler.py
 
-CMD [ "lambda_handler", "lambda_handler" ]
+CMD [ "lambda_handler.lambda_handler" ]
