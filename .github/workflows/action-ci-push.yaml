@@ -7,15 +7,11 @@ on:
     branches: 
       - main
 jobs:
-  deploy:
+  prepare:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # optionally use a convenient Ubuntu LTS + DVC + CML image
     # container: docker://ghcr.io/iterative/cml:0-dvc2-base1
-    defaults:
-      run:
-        # TODO
-        working-directory: ./models/iris
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -27,11 +23,23 @@ jobs:
           aws-access-key-id: ${{ secrets.ACC_KEY }}
           aws-secret-access-key: ${{ secrets.SEC_ID }}
           aws-region: ap-northeast-2
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # TODO
+        working-directory: ./models/iris
+    steps:
       - name: Build container
         run: |
           docker build --build-arg AWS_ACCESS_KEY_ID=${{ secrets.ACC_KEY }} \
                       --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.SEC_ID }} \
                       --tag cmlops-test .
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Push2ECR
         id: ecr
         uses: jwalton/gh-ecr-push@v1
