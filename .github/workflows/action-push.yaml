@@ -3,9 +3,14 @@ on:
   push: 
     branches-ignore:
       - main
+    paths:
+      - 'models/**/**.py'
   pull_request:
     branches-ignore: 
       - main
+    paths:
+      - 'models/**/**.py'
+
 jobs:
   run:
     runs-on: ubuntu-latest
