@@ -3,12 +3,9 @@ on:
   push:
     branches: 
       - main
-  pull_request:
-    branches: 
-      - main
 jobs:
   prepare:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # optionally use a convenient Ubuntu LTS + DVC + CML image
     # container: docker://ghcr.io/iterative/cml:0-dvc2-base1
