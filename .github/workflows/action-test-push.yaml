@@ -24,9 +24,9 @@ jobs:
         id: set-model-name
         with:
           script: |
-            const branchName = context.payload.pull_request.head.ref;
             console.log(JSON.stringify(github));
             console.log(JSON.stringify(context));
+            const branchName = context.payload.pull_request.head.ref;
             return branchName.split('/')[1];
           result-encoding: string
       - name: Get model name
