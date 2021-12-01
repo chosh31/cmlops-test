@@ -1,11 +1,11 @@
 name: action-test-push
 on: 
   push: 
-    branches:
-      - 'test-ci/**/**'
+    branches-ignore:
+      - main
   pull_request:
-    branches:
-      - 'test-ci/**/**'
+    branches-ignore: 
+      - main
 
 jobs:
   test-run:
