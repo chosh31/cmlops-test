@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
-      target-model: ${{ steps.set-model-name.outputs.result }}
+      target-model: ${{ steps.target-model-name.outputs.result }}
     steps:
       - name: 'Target Branch'
         run: echo '${{github.ref}}' 
@@ -22,7 +22,7 @@ jobs:
       #   run: echo "$GITHUB_CONTEXT"
       - name: 'Get Target Model'
         uses: actions/github-script@v5
-        id: get-model-name
+        id: target-model-name
         with:
           script: |
             console.log(JSON.stringify(context));
@@ -31,7 +31,7 @@ jobs:
             return targetModel;
           result-encoding: string
       - name: Get model name
-        run: echo "${{steps.set-model-name.outputs.result}}"
+        run: echo "${{steps.target-model-name.outputs.result}}"
   test-run:
     needs: test-prepare
     runs-on: ubuntu-latest
