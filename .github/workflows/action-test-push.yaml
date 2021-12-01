@@ -2,10 +2,10 @@ name: action-test-push
 on: 
   push: 
     branches:
-      - test-ci/*
+      - 'test-ci/*'
   pull_request:
     branches:
-      - test-ci/*
+      - 'test-ci/*'
 
 jobs:
   test-run:
