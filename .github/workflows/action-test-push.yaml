@@ -1,0 +1,33 @@
+name: action-test-push
+on: 
+  push: 
+    branches:
+      - test-ci/*
+  pull_request:
+    branches:
+      - test-ci/*
+
+jobs:
+  test-run:
+    runs-on: ubuntu-latest
+    # optionally use a convenient Ubuntu LTS + DVC + CML image
+    # container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    # defaults:
+    #   run:
+    #     # TODO
+    #     working-directory: ./models/iris
+    steps:
+      - run: echo '${{github.ref}}' 
+      - run: echo '${{github.head_ref}}'
+      - run: echo '${{github.base_ref}}'
+      - uses: actions/github-script@v5
+        id: set-model-name
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            console.log(JSON.stringify(github));
+            console.log(JSON.stringify(context));
+            return branchName.split('/')[1];
+          result-encoding: string
+      - name: Get model name
+        run: echo "${{steps.set-model-name.outputs.result}}"
