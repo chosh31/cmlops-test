@@ -18,13 +18,14 @@ jobs:
     #     working-directory: ./models/iris
     steps:
       - run: echo '${{github.ref}}' 
-      - run: echo '${{github.head_ref}}'
-      - run: echo '${{github.base_ref}}'
+      - name: 'github dump'
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - uses: actions/github-script@v5
         id: set-model-name
         with:
           script: |
-            console.log(JSON.stringify(github));
             console.log(JSON.stringify(context));
             return 'iris';
           result-encoding: string
