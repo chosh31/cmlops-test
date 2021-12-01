@@ -8,22 +8,21 @@ on:
       - 'feature/**'
 
 jobs:
-  test-run:
+  test-prepare:
     runs-on: ubuntu-latest
-    # optionally use a convenient Ubuntu LTS + DVC + CML image
-    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
-    # defaults:
-    #   run:
-    #     # TODO
-    #     working-directory: ./models/iris
+    # Map a step output to a job output
+    outputs:
+      target-model: ${{ steps.set-model-name.outputs.result }}
     steps:
-      - run: echo '${{github.ref}}' 
-      - name: 'github dump'
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - uses: actions/github-script@v5
-        id: set-model-name
+      - name: 'Target Branch'
+        run: echo '${{github.ref}}' 
+      # - name: 'github dump'
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
+      - name: 'Get Target Model'
+        uses: actions/github-script@v5
+        id: get-model-name
         with:
           script: |
             console.log(JSON.stringify(context));
@@ -33,6 +32,32 @@ jobs:
           result-encoding: string
       - name: Get model name
         run: echo "${{steps.set-model-name.outputs.result}}"
+  test-run:
+    needs: test-prepare
+    runs-on: ubuntu-latest
+    # optionally use a convenient Ubuntu LTS + DVC + CML image
+    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+    # defaults:
+    #   run:
+    #     # TODO
+    #     working-directory: ./models/iris
+    steps:
+      # - run: echo '${{github.ref}}' 
+      # - name: 'github dump'
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
+      # - uses: actions/github-script@v5
+      #   id: set-model-name
+      #   with:
+      #     script: |
+      #       console.log(JSON.stringify(context));
+      #       const branchName = context.ref;
+      #       const targetModel = branchName.split('/')[3];
+      #       return targetModel;
+      #     result-encoding: string
+      # - name: Get model name
+      #   run: echo "${{steps.set-model-name.outputs.result}}"
       - uses: actions/checkout@v2
       # may need to setup NodeJS & Python3 on e.g. self-hosted
       # - uses: actions/setup-node@v2
@@ -43,7 +68,7 @@ jobs:
       #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
       - name: Pip requirement
-        working-directory: ./models/${{steps.set-model-name.outputs.result}}
+        working-directory: ./models/${{needs.test-prepare.outputs.target-model}}
         run: |
           pip uninstall protobuf python3-protobuf
           pip install --upgrade pip
@@ -55,7 +80,7 @@ jobs:
       #     # Your ML workflow goes here
       #     python train.py
       - name: Write CML report
-        working-directory: ./models/${{steps.set-model-name.outputs.result}}
+        working-directory: ./models/${{needs.test-prepare.outputs.target-model}}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.ACC_KEY }}
