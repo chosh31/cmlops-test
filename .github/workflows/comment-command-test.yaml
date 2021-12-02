@@ -4,7 +4,7 @@ on:
     types: 
       - created
 jobs:
-  prepare:
+  cmt-prepare:
     runs-on: ubuntu-latest
     if: startsWith(github.event.comment.body, '/test-model')
     outputs:
@@ -32,12 +32,12 @@ jobs:
           echo "- target command: ${{ steps.split-comment-body.outputs._0 }}"
           echo "- args: ${{ steps.split-comment-body.outputs._1 }}"
   trainModel:
-    needs: prepare
+    needs: cmt-prepare
     runs-on: ubuntu-latest
     container: docker://ghcr.io/iterative/cml:0-dvc2-base1
     defaults:
       run:
-        working-directory: ./models/${{needs.prepare.outputs.target-model}}
+        working-directory: ./models/${{needs.cmt-prepare.outputs.target-model}}
     steps:
       - uses: actions/checkout@v2
         with:
