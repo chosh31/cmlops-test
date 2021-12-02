@@ -30,9 +30,11 @@ jobs:
           result-encoding: string
       - name: Get model name
         run: echo "${{steps.target-model-name.outputs.result}}"
+      - uses: actions/checkout@v2
       - name: Check working directory
         id: check-wd
         working-directory: ./models/${{steps.target-model-name.outputs.result}}
+        run: ls -al
       - name: Check on failure
         if: steps.check-wd.outcome != 'succcess'
         run: exit 1
