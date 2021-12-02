@@ -90,8 +90,8 @@ jobs:
           cml-publish cnf_matrix.png --md >> report.md
           
           echo "github: ${{ github }}"
-          echo "sha: ${{ github.event.pull_request.head.sha || github.sha }}"
-          cml-send-comment --commit-sha=${{ github.event.pull_request.head.sha || github.sha }} report.md
+          echo "sha: ${{ steps.comment-branch.outputs.head_ref }}"
+          cml-send-comment --commit-sha=${{ steps.comment-branch.outputs.head_ref }} report.md
   output:
     needs: trainModel
     runs-on: ubuntu-latest
@@ -100,7 +100,7 @@ jobs:
         id: vars
         run: |
           echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
-          echo ::set-output name=report-url::https://github.com/$GITHUB_REPOSITORY/commit/${{ github.event.pull_request.head.sha || github.sha }}
+          echo ::set-output name=report-url::https://github.com/$GITHUB_REPOSITORY/commit/${{ needs.trainModel.steps.comment-branch.outputs.head_ref }}
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v1
         with:
