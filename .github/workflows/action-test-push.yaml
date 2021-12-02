@@ -26,21 +26,26 @@ jobs:
         with:
           script: |
             console.log(JSON.stringify(context));
-            const branchName = context.ref;
-            const targetModel = branchName.split('/')[3];
-            return targetModel;
+            return context.ref.match(/\/feature\/(\w+)/)[1];
           result-encoding: string
       - name: Get model name
         run: echo "${{steps.target-model-name.outputs.result}}"
+      - name: Check working directory
+        id: check-wd
+        working-directory: ./models/${{steps.target-model-name.outputs.result}}
+      - name: Check on failure
+        if: steps.check-wd.outcome != 'succcess'
+        run: exit 1
+
   test-run:
     needs: test-prepare
     runs-on: ubuntu-latest
     # optionally use a convenient Ubuntu LTS + DVC + CML image
     container: docker://ghcr.io/iterative/cml:0-dvc2-base1
-    # defaults:
-    #   run:
-    #     # TODO
-    #     working-directory: ./models/iris
+    defaults:
+      run:
+        # TODO
+        working-directory: ./models/${{needs.test-prepare.outputs.target-model}}
     steps:
       # - run: echo '${{github.ref}}' 
       # - name: 'github dump'
@@ -68,7 +73,6 @@ jobs:
       #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
       - name: Pip requirement
-        working-directory: ./models/${{needs.test-prepare.outputs.target-model}}
         run: |
           pip uninstall protobuf python3-protobuf
           pip install --upgrade pip
@@ -80,7 +84,6 @@ jobs:
       #     # Your ML workflow goes here
       #     python train.py
       - name: Write CML report
-        working-directory: ./models/${{needs.test-prepare.outputs.target-model}}
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.ACC_KEY }}
