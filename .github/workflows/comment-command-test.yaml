@@ -7,6 +7,9 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     if: startsWith(github.event.comment.body, '/test-model')
+    outputs:
+      command: ${{ steps.split-comment-body.outputs._0 }}
+      target-model: ${{ steps.split-comment-body.outputs._1 }}
     steps:
       - name: Split comment body
         uses: jungwinter/split@v2
@@ -22,11 +25,11 @@ jobs:
         with:
           comment-id: ${{ github.event.comment.id }}
           body: |
-            > Commend error ${{ steps.split-comment-body.outputs._0 }}
+            > Command error ${{ steps.split-comment-body.outputs._0 }}
       - name: Prepared
         run: |
           echo "Comment: ${{ github.event.comment.body }}"
-          echo "- target commend: ${{ steps.split-comment-body.outputs._0 }}"
+          echo "- target command: ${{ steps.split-comment-body.outputs._0 }}"
           echo "- args: ${{ steps.split-comment-body.outputs._1 }}"
   trainModel:
     needs: prepare
@@ -34,8 +37,7 @@ jobs:
     container: docker://ghcr.io/iterative/cml:0-dvc2-base1
     defaults:
       run:
-        # TODO
-        working-directory: ./models/${{ needs.prepare.steps.split-comment-body.outputs._1 }}
+        working-directory: ./models/${{needs.prepare.outputs.target-model}}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -52,7 +54,7 @@ jobs:
       - name: Check working directory
         run: |
           pwd
-          echo "./models/${{ needs.prepare.steps.split-comment-body.outputs._1 }}"
+          echo "./models/${{needs.prepare.outputs.target-model}}"
       - name: Pip requirement
         run: |
           pip uninstall protobuf python3-protobuf
