@@ -11,6 +11,10 @@ jobs:
       command: ${{ steps.split-comment-body.outputs._0 }}
       target-model: ${{ steps.split-comment-body.outputs._1 }}
     steps:
+      - name: 'github dump'
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Split comment body
         uses: jungwinter/split@v2
         id: split-comment-body
@@ -54,7 +58,7 @@ jobs:
       - name: Check working directory
         run: |
           pwd
-          echo "./models/${{needs.prepare.outputs.target-model}}"
+          echo "./models/${{needs.cmt-prepare.outputs.target-model}}"
       - name: Pip requirement
         run: |
           pip uninstall protobuf python3-protobuf
@@ -96,7 +100,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          issue-number: ${{ github.event.issue.number }}
           body: |
             [Model report output][1]
             [Github action run output][2]
