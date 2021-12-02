@@ -49,6 +49,10 @@ jobs:
       #   with:
       #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
+      - name: Check working directory
+        run: |
+          pwd
+          echo "./models/${{ needs.prepare.steps.split-comment-body.outputs._1 }}"
       - name: Pip requirement
         run: |
           pip uninstall protobuf python3-protobuf
