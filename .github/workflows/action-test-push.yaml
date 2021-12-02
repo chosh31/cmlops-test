@@ -34,10 +34,9 @@ jobs:
       - name: Check working directory
         id: check-wd
         working-directory: ./models/${{steps.target-model-name.outputs.result}}
-        run: ls -al
-      - name: Check on failure
-        if: steps.check-wd.outcome != 'succcess'
-        run: exit 1
+        run: |
+          pwd
+          ls -al
 
   test-run:
     needs: test-prepare
