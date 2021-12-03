@@ -84,7 +84,7 @@ jobs:
           python evaluate.py
 
           echo "## Model Metrics" >> report.md
-          dvc metrics diff HEAD --show-md >> report.md
+          dvc metrics diff ${{ steps.comment-branch.outputs.base_ref }} --show-md >> report.md
 
           echo "## Data" >> report.md
           cml-publish cnf_matrix.png --md >> report.md
