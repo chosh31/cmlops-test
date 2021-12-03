@@ -49,6 +49,7 @@ jobs:
         if: success()
         with:
           ref: ${{ steps.comment-branch.outputs.head_ref }}
+          fetch-depth: 0
       # - uses: actions/checkout@v2
       #   with:
       #     ref: ${{ github.event.client_payload.pull_request.head.ref }}
