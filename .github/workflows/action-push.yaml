@@ -25,7 +25,6 @@ jobs:
         with:
           script: |
             console.log(JSON.stringify(context));
-            if (context.payload.pull_requests)
             return context.ref.match(/\/feature\/(\w+)/)[1];
           result-encoding: string
       - name: Get model name
