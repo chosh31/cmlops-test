@@ -1,4 +1,4 @@
-name: Comment-test-model
+name: Comment-train-model
 on:
   issue_comment:
     types: 
@@ -6,7 +6,7 @@ on:
 jobs:
   cmt-prepare:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.comment.body, '/test-model')
+    if: startsWith(github.event.comment.body, '/train-model')
     outputs:
       command: ${{ steps.split-comment-body.outputs._0 }}
       target-model: ${{ steps.split-comment-body.outputs._1 }}
@@ -20,9 +20,6 @@ jobs:
         id: split-comment-body
         with:
           msg: '${{ github.event.comment.body }}'
-      # - name: Check command
-      #   if: steps.split-comment-body.outputs._0 != '/test-model'
-      #   run: exit 1
       - name: Edit comment with error message
         if: failure()
         uses: peter-evans/create-or-update-comment@v1
@@ -35,7 +32,7 @@ jobs:
           echo "Comment: ${{ github.event.comment.body }}"
           echo "- target command: ${{ steps.split-comment-body.outputs._0 }}"
           echo "- args: ${{ steps.split-comment-body.outputs._1 }}"
-  trainModel:
+  train-model:
     needs: cmt-prepare
     runs-on: ubuntu-latest
     container: docker://ghcr.io/iterative/cml:0-dvc2-base1
@@ -54,17 +51,6 @@ jobs:
         with:
           ref: ${{ steps.comment-branch.outputs.head_ref }}
           fetch-depth: 0
-      # - uses: actions/checkout@v2
-      #   with:
-      #     ref: ${{ github.event.client_payload.pull_request.head.ref }}
-      #     fetch-depth: 0
-      # may need to setup NodeJS & Python3 on e.g. self-hosted
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '12'
-      # - uses: actions/setup-python@v2
-      #   with:
-      #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
       - name: Check working directory
         run: |
@@ -98,14 +84,14 @@ jobs:
           echo "sha: ${{ steps.comment-branch.outputs.head_sha }}"
           cml-send-comment --commit-sha=${{ steps.comment-branch.outputs.head_sha }} report.md
   output:
-    needs: trainModel
+    needs: train-model
     runs-on: ubuntu-latest
     steps:
       - name: Create URL to the run output
         id: vars
         run: |
           echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
-          echo ::set-output name=report-url::https://github.com/$GITHUB_REPOSITORY/commit/${{ needs.trainModel.steps.comment-branch.outputs.head_sha }}
+          echo ::set-output name=report-url::https://github.com/$GITHUB_REPOSITORY/commit/${{ needs.train-model.steps.comment-branch.outputs.head_sha }}
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v1
         with:

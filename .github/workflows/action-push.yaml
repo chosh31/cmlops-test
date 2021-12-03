@@ -1,34 +1,54 @@
 name: action-push
 on: 
-  push: 
-    branches-ignore:
-      - main
-    paths:
-      - 'models/**/**.py'
-  pull_request:
-    branches-ignore: 
-      - main
+  push:
+    branches:
+      - 'feature/**'
     paths:
       - 'models/**/**.py'
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      target-model: ${{ steps.target-model-name.outputs.result }}
+    steps:
+      - name: 'Target Branch'
+        run: echo '${{github.ref}}' 
+      # - name: 'github dump'
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
+      - name: 'Get Target Model'
+        uses: actions/github-script@v5
+        id: target-model-name
+        with:
+          script: |
+            console.log(JSON.stringify(context));
+            if (context.payload.pull_requests)
+            return context.ref.match(/\/feature\/(\w+)/)[1];
+          result-encoding: string
+      - name: Get model name
+        run: echo "${{steps.target-model-name.outputs.result}}"
+      - uses: actions/checkout@v2
+      - name: Check working directory
+        id: check-wd
+        working-directory: ./models/${{steps.target-model-name.outputs.result}}
+        run: |
+          pwd
+          ls -al
+
   run:
+    needs: prepare
     runs-on: ubuntu-latest
     # optionally use a convenient Ubuntu LTS + DVC + CML image
     container: docker://ghcr.io/iterative/cml:0-dvc2-base1
     defaults:
       run:
         # TODO
-        working-directory: ./models/iris
+        working-directory: ./models/${{needs.prepare.outputs.target-model}}
     steps:
       - uses: actions/checkout@v2
-      # may need to setup NodeJS & Python3 on e.g. self-hosted
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '12'
-      # - uses: actions/setup-python@v2
-      #   with:
-      #     python-version: '3.x'
       - uses: iterative/setup-cml@v1
       - name: Pip requirement
         run: |
@@ -39,7 +59,6 @@ jobs:
           pip install -r requirements.txt
       # - name: Train model
       #   run: |
-      #     # Your ML workflow goes here
       #     python train.py
       - name: Write CML report
         env:
